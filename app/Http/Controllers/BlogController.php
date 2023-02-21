@@ -56,8 +56,20 @@ class BlogController extends Controller
     */
     public function show($id)
     {
-        $blog = Blog::findOrFail($id);
-        return response()->json($blog);
+        try{
+            $blog = Blog::findOrFail($id);
+            return response()->json([
+                'status' => true,
+                'data' => $blog
+            ], 200);
+            
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+        
     }
 
     /**

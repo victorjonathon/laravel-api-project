@@ -39,10 +39,25 @@ class BlogController extends Controller
         $request->validate([
             'title' => 'required',
             'body' => 'required',
+            'fileName' => 'required'
         ]);
+        
+        $blog = new Blog();
 
-        $blog = Blog::create($request->all());
+        $uploadedFile = $request->file('fileName');
        
+        if(in_array($uploadedFile->getClientOriginalExtension(), config('constants.ALLOWED_IMG_EXT'))){
+            $path = $uploadedFile->store('public/blog-images');
+
+            $blog->image = $path;
+            
+        }
+
+        $blog->title = $request->get('title');
+        $blog->body = $request->get('body');
+
+        $blog->save();
+        
         return [
             "status" => 1,
             "data" => $blog
